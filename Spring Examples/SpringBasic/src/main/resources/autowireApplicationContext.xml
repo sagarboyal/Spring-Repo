@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Example Autowire by name -->
+    <!-- Bean id Should be same as the class properties name -->
+    <bean id="specifications" class="org.example.autowire.byName.Specifications">
+        <property name="make" value="BMW"/>
+        <property name="model" value="M1000RR"/>
+    </bean>
+    <!-- Autowire in by name injection happen with setter method-->
+    <bean id="carBean" class="org.example.autowire.byName.Car" autowire="byName"/>
+
+
+    <!-- Example Autowire by type -->
+    <!-- Bean id does not matter here match will be happened with class type.
+    like if we create two bean then it will be confused and give a error.-->
+    <bean id="spec" class="org.example.autowire.byType.Specifications">
+        <property name="make" value="Mustang GT"/>
+        <property name="model" value="1000"/>
+    </bean>
+    <!-- Autowire in by name injection happen with setter method-->
+    <bean id="carBean1" class="org.example.autowire.byType.Car" autowire="byType"/>
+
+    <!-- Example Autowire by constructor -->
+    <!-- Bean id does not matter here -->
+    <bean id="spec1" class="org.example.autowire.byConstructor.Specifications">
+        <property name="make" value="Ferrari"/>
+        <property name="model" value="1000"/>
+    </bean>
+    <!-- Autowire in by name injection happen with constructor-->
+    <bean id="carBean2" class="org.example.autowire.byConstructor.Car" autowire="constructor"/>
+</beans>
