@@ -31,15 +31,4 @@
     </bean>
 
 
-    <!-- Example Inversion of control -->
-    <bean id="sqlDbBean" class="org.example.IoC.UserSqlDatabase"/>
-    <bean id="mongoDbBean" class="org.example.IoC.UserMongoDataBase"/>
-    <bean id="userManagerBeanWithSqlDb" class="org.example.IoC.UserManager">
-        <constructor-arg ref="sqlDbBean"/>
-    </bean>
-    <bean id="userManagerBeanWithMongoDb" class="org.example.IoC.UserManager">
-        <constructor-arg ref="mongoDbBean"/>
-    </bean>
-
-
 </beans>

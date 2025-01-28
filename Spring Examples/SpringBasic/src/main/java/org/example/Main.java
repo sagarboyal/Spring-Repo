@@ -1,6 +1,5 @@
 package org.example;
 
-import org.example.IoC.UserManager;
 import org.example.bean.MyBean;
 import org.example.dependencyInjection.constructor.Car;
 import org.springframework.context.ApplicationContext;
@@ -24,12 +23,6 @@ public class Main {
         // setter injection
         org.example.dependencyInjection.setter.Car car2 = (org.example.dependencyInjection.setter.Car) context.getBean("carBeanForSetter");
         car2.display();
-
-        //Ioc
-        UserManager userManager1 = (UserManager) context.getBean("userManagerBeanWithSqlDb");
-        UserManager userManager2 = (UserManager) context.getBean("userManagerBeanWithMongoDb");
-        System.out.println(userManager1.getUserInfo());
-        System.out.println(userManager2.getUserInfo());
 
     }
 }
