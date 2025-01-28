@@ -8,4 +8,27 @@
        <property name="message" value="Hello, Spring default value from XML!"/>  <!-- value is default for message properties -->
     </bean>
 
+    <!-- Example Constructor Injection -->
+    <!-- First create a normal bean -->
+    <bean id="specificationsBeanForConstructor" class="org.example.dependencyInjection.constructor.Specifications">
+        <property name="make" value="Toyota"/>
+        <property name="model" value="Corolla"/>
+    </bean>
+    <!-- Then pass the bean (Create a constructor in car class
+    that will accept specification bean and would be provided by Xml file) -->
+    <bean id="carBeanForConstructor" class="org.example.dependencyInjection.constructor.Car">
+        <constructor-arg ref="specificationsBeanForConstructor"/>
+    </bean>
+
+    <!-- Example Setter Injection -->
+    <bean id="specificationsBeanForSetter" class="org.example.dependencyInjection.setter.Specifications">
+        <property name="make" value="BMW"/>
+        <property name="model" value="M1000RR"/>
+    </bean>
+
+    <bean id="carBeanForSetter" class="org.example.dependencyInjection.setter.Car">
+        <property name="specifications" ref="specificationsBeanForSetter"/>
+    </bean>
+
+
 </beans>
