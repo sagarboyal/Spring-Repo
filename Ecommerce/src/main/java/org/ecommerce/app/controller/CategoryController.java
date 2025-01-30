@@ -39,4 +39,14 @@ public class CategoryController {
         }
         return ResponseEntity.ok("Category deleted successfully");
     }
+
+    @PutMapping("/public/categories")
+    public ResponseEntity<String> updateCategory(@RequestBody Category category) {
+        try{
+            categoryService.updateCategory(category);
+        }catch (ResponseStatusException e){
+            return new ResponseEntity<String>(e.getReason(), e.getStatusCode());
+        }
+        return ResponseEntity.ok("Category updated successfully");
+    }
 }

@@ -8,6 +8,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
+
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
@@ -37,11 +39,20 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Boolean deleteCategoryById(long id) {
+    public void deleteCategoryById(long id) {
         Category category = getCategoryById(id);
         if (category != null)
             categoryList.remove(category);
-        return (category != null);
+    }
+
+    @Override
+    public void updateCategory(Category category) {
+        int index = IntStream.range(0, categoryList.size())
+                .filter(i -> categoryList.get(i).getCategoryId().equals(category.getCategoryId()))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+        if (index != -1)
+            categoryList.set(index, category);
     }
 
 }

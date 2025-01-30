@@ -8,5 +8,6 @@ public interface CategoryService {
     public List<Category> getCategoryList();
     public Category getCategoryById(long id);
     public void addCategory(Category category);
-    public Boolean deleteCategoryById(long id);
+    public void deleteCategoryById(long id);
+    public void updateCategory(Category category);
 }
