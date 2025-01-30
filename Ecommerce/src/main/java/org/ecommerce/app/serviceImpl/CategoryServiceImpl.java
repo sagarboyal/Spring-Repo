@@ -9,16 +9,35 @@ import java.util.List;
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
-    private final List<Category> categories = new ArrayList<Category>();
+    private final List<Category> categoryList = new ArrayList<Category>();
+    private long countCategory = 1;
 
     @Override
-    public List<Category> getCategories() {
-        return categories;
+    public List<Category> getCategoryList() {
+        return categoryList;
+    }
+
+    @Override
+    public Category getCategoryById(long id) {
+        return categoryList.stream()
+                .filter(category ->
+                        category.getCategoryId()
+                                .equals(id))
+                .findFirst().orElse(null);
     }
 
     @Override
     public void addCategory(Category category) {
-        categories.add(category);
+        category.setCategoryId(countCategory++);
+        categoryList.add(category);
+    }
+
+    @Override
+    public Boolean deleteCategoryById(long id) {
+        Category category = getCategoryById(id);
+        if (category != null)
+            categoryList.remove(category);
+        return (category != null);
     }
 
 }
