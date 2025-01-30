@@ -2,7 +2,9 @@ package org.ecommerce.app.serviceImpl;
 
 import org.ecommerce.app.model.Category;
 import org.ecommerce.app.service.CategoryService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,9 @@ public class CategoryServiceImpl implements CategoryService {
                 .filter(category ->
                         category.getCategoryId()
                                 .equals(id))
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElseThrow(() ->
+                            new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
     }
 
     @Override
