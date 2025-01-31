@@ -32,17 +32,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category getCategoryById(long id) {
-        List<Category> categoryList = categoryRepository.findAll();
-        return categoryList.stream()
-                .filter(category ->
-                        category.getCategoryId()
-                                .equals(id))
-                .findFirst()
+        return categoryRepository
+                .findById(id)
                 .orElseThrow(() ->
                             new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
     }
-
-
 
     @Override
     public void deleteCategoryById(long id) {
