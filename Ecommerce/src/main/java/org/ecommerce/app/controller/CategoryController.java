@@ -1,5 +1,6 @@
 package org.ecommerce.app.controller;
 
+import jakarta.validation.Valid;
 import org.ecommerce.app.model.Category;
 import org.ecommerce.app.service.CategoryService;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class CategoryController {
     }
 
     @PostMapping("/public/categories")
-    public ResponseEntity<String> addCategory(@RequestBody Category category) {
+    public ResponseEntity<String> addCategory(@Valid @RequestBody Category category) {
         categoryService.addCategory(category);
         return ResponseEntity.status(HttpStatus.CREATED).body("Category added successfully");
     }

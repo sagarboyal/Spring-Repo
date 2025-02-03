@@ -17,7 +17,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
-    private long countCategory = 1L;
 
     @Override
     public List<Category> getCategoryList() {
@@ -26,7 +25,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void addCategory(Category category) {
-        countCategory++;
         categoryRepository.save(category);
     }
 
