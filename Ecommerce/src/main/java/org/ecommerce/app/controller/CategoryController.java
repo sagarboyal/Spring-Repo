@@ -36,7 +36,7 @@ public class CategoryController {
         try{
             categoryService.deleteCategoryById(id);
         }catch (ResponseStatusException e){
-            return new ResponseEntity<String>(e.getReason(), e.getStatusCode());
+            return new ResponseEntity<>(e.getReason(), e.getStatusCode());
         }
         return ResponseEntity.ok("Category deleted successfully");
     }
@@ -46,7 +46,7 @@ public class CategoryController {
         try{
             categoryService.updateCategory(category);
         }catch (ResponseStatusException e){
-            return new ResponseEntity<String>(e.getReason(), e.getStatusCode());
+            return new ResponseEntity<>(e.getReason(), e.getStatusCode());
         }
         return ResponseEntity.ok("Category updated successfully");
     }
