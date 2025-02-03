@@ -1,5 +1,6 @@
 package org.ecommerce.app.serviceImpl;
 
+import org.ecommerce.app.exceptions.ResourceNotFoundException;
 import org.ecommerce.app.model.Category;
 import org.ecommerce.app.repository.CategoryRepository;
 import org.ecommerce.app.service.CategoryService;
@@ -33,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository
                 .findById(id)
                 .orElseThrow(() ->
-                            new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+                            new ResourceNotFoundException("Category", "categoryId", id));
     }
 
     @Override
