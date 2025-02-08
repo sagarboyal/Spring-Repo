@@ -40,30 +40,37 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void addCategory(Category category) {
-        Category data = categoryRepository.findByCategoryName(category.getCategoryName());
+    public CategoryDTO createCategory(CategoryDTO categoryDto) {
+        Category data = categoryRepository.findByCategoryName(categoryDto.getCategoryName());
         if (data != null) throw new APIException("Category already exists");
-        categoryRepository.save(category);
+        // covert dto class to entity
+        Category category = modelMapper.map(categoryDto, Category.class);
+        return modelMapper.map(categoryRepository.save(category), CategoryDTO.class);
     }
 
     @Override
-    public Category getCategoryById(long id) {
-        return categoryRepository
+    public CategoryDTO getCategoryById(long id) {
+        Category data = categoryRepository
                 .findById(id)
                 .orElseThrow(() ->
                             new ResourceNotFoundException("Category", "categoryId", id));
+
+        return modelMapper.map(data, CategoryDTO.class);
     }
 
     @Override
-    public void deleteCategoryById(long id) {
-        Category category = getCategoryById(id);
-        if (category != null)
-            categoryRepository.delete(category);
+    public CategoryDTO deleteCategoryById(long id) {
+        Category category = modelMapper.map(getCategoryById(id), Category.class);
+        if (category != null) categoryRepository.delete(category);
+        return modelMapper.map(category, CategoryDTO.class);
     }
 
     @Override
-    public void updateCategory(Category category) {
-        getCategoryById(category.getCategoryId());
-        categoryRepository.save(category);
+    public CategoryDTO updateCategory(CategoryDTO categoryDto) {
+        // if id not available it will throw exception
+        getCategoryById(categoryDto.getCategoryId());
+        // if found just covert it into entity class and update it save it
+        categoryRepository.save(modelMapper.map(categoryDto, Category.class));
+        return categoryDto;
     }
 }

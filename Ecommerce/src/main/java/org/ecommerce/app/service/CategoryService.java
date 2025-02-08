@@ -1,12 +1,12 @@
 package org.ecommerce.app.service;
 
-import org.ecommerce.app.model.Category;
+import org.ecommerce.app.payload.CategoryDTO;
 import org.ecommerce.app.payload.CategoryResponse;
 
 public interface CategoryService {
-    public CategoryResponse getCategoryList();
-    public Category getCategoryById(long id);
-    public void addCategory(Category category);
-    public void deleteCategoryById(long id);
-    public void updateCategory(Category category);
+    CategoryResponse getCategoryList();
+    CategoryDTO getCategoryById(long id);
+    CategoryDTO createCategory(CategoryDTO categoryDto);
+    CategoryDTO deleteCategoryById(long id);
+    CategoryDTO updateCategory(CategoryDTO categoryDto);
 }

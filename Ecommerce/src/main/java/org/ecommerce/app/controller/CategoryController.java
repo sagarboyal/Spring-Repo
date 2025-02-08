@@ -1,7 +1,7 @@
 package org.ecommerce.app.controller;
 
 import jakarta.validation.Valid;
-import org.ecommerce.app.model.Category;
+import org.ecommerce.app.payload.CategoryDTO;
 import org.ecommerce.app.payload.CategoryResponse;
 import org.ecommerce.app.service.CategoryService;
 import org.springframework.http.HttpStatus;
@@ -25,20 +25,21 @@ public class CategoryController {
     }
 
     @PostMapping("/public/categories")
-    public ResponseEntity<String> addCategory(@Valid @RequestBody Category category) {
-        categoryService.addCategory(category);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Category added successfully");
+    public ResponseEntity<CategoryDTO> addCategory(@Valid @RequestBody CategoryDTO category) {
+        CategoryDTO data = categoryService.createCategory(category);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(data);
     }
 
     @DeleteMapping("/admin/categories/{id}")
-    public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
-        categoryService.deleteCategoryById(id);
-        return ResponseEntity.ok("Category deleted successfully");
+    public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable Long id) {
+        CategoryDTO data = categoryService.deleteCategoryById(id);
+        return ResponseEntity.ok(data);
     }
 
     @PutMapping("/public/categories")
-    public ResponseEntity<String> updateCategory(@Valid @RequestBody Category category) {
-        categoryService.updateCategory(category);
-        return ResponseEntity.ok("Category updated successfully");
+    public ResponseEntity<CategoryDTO> updateCategory(@Valid @RequestBody CategoryDTO category) {
+        CategoryDTO data = categoryService.updateCategory(category);
+        return ResponseEntity.ok(data);
     }
 }
