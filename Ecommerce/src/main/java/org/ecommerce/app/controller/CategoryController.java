@@ -1,6 +1,7 @@
 package org.ecommerce.app.controller;
 
 import jakarta.validation.Valid;
+import org.ecommerce.app.config.AppConstants;
 import org.ecommerce.app.payload.CategoryDTO;
 import org.ecommerce.app.payload.CategoryResponse;
 import org.ecommerce.app.service.CategoryService;
@@ -21,8 +22,8 @@ public class CategoryController {
 
     @GetMapping("/public/categories")
     public ResponseEntity<CategoryResponse> getCategories(
-            @RequestParam(name = "pageNumber") Integer pageNumber,
-            @RequestParam(name = "pageSize") Integer pageSize) {
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize) {
         return ResponseEntity.ok(categoryService.getCategoryList(pageNumber, pageSize));
     }
 

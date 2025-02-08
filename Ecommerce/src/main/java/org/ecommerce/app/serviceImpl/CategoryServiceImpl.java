@@ -27,22 +27,6 @@ public class CategoryServiceImpl implements CategoryService {
     private ModelMapper modelMapper;
 
     @Override
-    public CategoryResponse getCategoryList() {
-        List<Category> categoryList = categoryRepository.findAll();
-
-        if (categoryList.isEmpty())
-            throw new APIException("No Categories Found!!!");
-
-        List<CategoryDTO> categoryDTOList = categoryList.stream()
-                .map(category -> modelMapper.map(category, CategoryDTO.class))
-                .toList();
-
-        return CategoryResponse.builder()
-                .content(categoryDTOList)
-                .build();
-    }
-
-    @Override
     public CategoryResponse getCategoryList(Integer pageNumber, Integer pageSize){
 
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
