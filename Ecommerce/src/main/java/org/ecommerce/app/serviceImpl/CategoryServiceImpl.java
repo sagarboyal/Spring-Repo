@@ -58,6 +58,11 @@ public class CategoryServiceImpl implements CategoryService {
 
         return CategoryResponse.builder()
                 .content(categoryDTOList)
+                .pageNumber(categoryPage.getNumber())
+                .pageSize(categoryPage.getSize())
+                .totalElements(categoryPage.getTotalElements())
+                .totalPages(categoryPage.getTotalPages())
+                .lastPage(categoryPage.isLast())
                 .build();
     }
 
