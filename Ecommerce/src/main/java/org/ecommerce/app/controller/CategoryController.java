@@ -20,8 +20,10 @@ public class CategoryController {
     }
 
     @GetMapping("/public/categories")
-    public ResponseEntity<CategoryResponse> getCategories() {
-        return ResponseEntity.ok( categoryService.getCategoryList());
+    public ResponseEntity<CategoryResponse> getCategories(
+            @RequestParam(name = "pageNumber") Integer pageNumber,
+            @RequestParam(name = "pageSize") Integer pageSize) {
+        return ResponseEntity.ok(categoryService.getCategoryList(pageNumber, pageSize));
     }
 
     @PostMapping("/public/categories")
