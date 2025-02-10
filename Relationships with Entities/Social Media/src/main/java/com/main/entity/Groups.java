@@ -1,16 +1,29 @@
 package com.main.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
-
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
 public class Groups {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @ManyToMany(mappedBy = "groups")
     private Set<SocialUser> users = new HashSet<SocialUser>();
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

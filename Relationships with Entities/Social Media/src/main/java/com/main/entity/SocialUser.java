@@ -1,12 +1,17 @@
 package com.main.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
 public class SocialUser {
     @Id
@@ -26,4 +31,10 @@ public class SocialUser {
             inverseJoinColumns = @JoinColumn(name = "group_id")
     )
     private Set<Groups> groups = new HashSet<>();
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
