@@ -19,7 +19,7 @@ public class SocialUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "user") // Managed by UserProfile
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL) // Managed by UserProfile
     private UserProfile profile;
 
     @OneToMany(mappedBy = "user")// Managed by Post
@@ -37,5 +37,10 @@ public class SocialUser {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public void setProfile(UserProfile profile) {
+        profile.setUser(this);
+        this.profile = profile;
     }
 }
