@@ -1,5 +1,6 @@
 package com.main.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,5 +22,6 @@ public class UserProfile {
     //@JoinColumn(name = "social_user") // explicitly add foreign key column by jpa
     @OneToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private SocialUser user;
 }

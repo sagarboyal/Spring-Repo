@@ -1,5 +1,6 @@
 package com.main.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,7 @@ public class Groups {
     private Long id;
 
     @ManyToMany(mappedBy = "groups")
+    @JsonIgnore
     private Set<SocialUser> users = new HashSet<SocialUser>();
 
     @Override
