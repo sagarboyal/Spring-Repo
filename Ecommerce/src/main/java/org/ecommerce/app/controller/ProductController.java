@@ -20,6 +20,11 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.FOUND).body(productService.getAllProducts());
     }
 
+    @GetMapping("/public/categories/{categoryId}/products")
+    public ResponseEntity<ProductResponse> getAllProductsByCategory(@PathVariable Long categoryId) {
+        return ResponseEntity.status(HttpStatus.FOUND).body(productService.getAllProductsByCategoryId(categoryId));
+    }
+
     @PostMapping("/admin/categories/{categoryId}/product")
     public ResponseEntity<ProductDTO> addProduct(@RequestBody Product product,@PathVariable Long categoryId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.addProduct(categoryId, product));
