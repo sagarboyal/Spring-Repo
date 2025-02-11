@@ -25,6 +25,11 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.FOUND).body(productService.getAllProductsByCategoryId(categoryId));
     }
 
+    @GetMapping("/public/products/keyword/{keyword}")
+    public ResponseEntity<ProductResponse> getAllProductsByKeyWord(@PathVariable String keyword) {
+        return ResponseEntity.status(HttpStatus.FOUND).body(productService.getAllProductsByCategoryKeyword(keyword));
+    }
+
     @PostMapping("/admin/categories/{categoryId}/product")
     public ResponseEntity<ProductDTO> addProduct(@RequestBody Product product,@PathVariable Long categoryId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.addProduct(categoryId, product));
