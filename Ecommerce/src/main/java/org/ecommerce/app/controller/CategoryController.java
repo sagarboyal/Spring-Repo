@@ -2,8 +2,8 @@ package org.ecommerce.app.controller;
 
 import jakarta.validation.Valid;
 import org.ecommerce.app.config.AppConstants;
-import org.ecommerce.app.payload.CategoryDTO;
-import org.ecommerce.app.payload.CategoryResponse;
+import org.ecommerce.app.payload.category.CategoryDTO;
+import org.ecommerce.app.payload.category.CategoryResponse;
 import org.ecommerce.app.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

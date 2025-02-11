@@ -1,4 +1,4 @@
-package org.ecommerce.app.payload;
+package org.ecommerce.app.payload.category;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
