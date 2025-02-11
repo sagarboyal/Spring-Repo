@@ -25,9 +25,4 @@ public class UserProfile {
     @JsonIgnore
     private SocialUser user;
 
-    public void setUser(SocialUser user) {
-        this.user = user;
-        user.setProfile(this);
-
-    }
 }

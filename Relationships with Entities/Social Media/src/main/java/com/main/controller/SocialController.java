@@ -23,5 +23,10 @@ public class SocialController {
     public ResponseEntity<SocialUser> addSocialMediaUser(@RequestBody SocialUser socialUser) {
         return ResponseEntity.status(HttpStatus.CREATED).body(socialService.addUser(socialUser));
     }
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<String> deleteSocialMediaUser(@PathVariable("id") long id) {
+        socialService.deleteUser(id);
+        return ResponseEntity.status(HttpStatus.OK).body("deleted");
+    }
 
 }

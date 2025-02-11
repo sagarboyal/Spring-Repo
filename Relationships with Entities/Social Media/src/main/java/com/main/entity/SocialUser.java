@@ -19,13 +19,13 @@ public class SocialUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL) // Managed by UserProfile
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}) // Managed by UserProfile
     private UserProfile profile;
 
-    @OneToMany(mappedBy = "user")// Managed by Post
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})// Managed by Post
     private List<Post> posts = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JoinTable(
             name = "USER_GROUPS",
             joinColumns = @JoinColumn(name = "user_id"),
