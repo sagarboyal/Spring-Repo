@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -49,6 +48,12 @@ public class ProductServiceImpl implements ProductService {
         return ProductResponse.builder()
                 .content(productDTOS)
                 .build();
+    }
+
+    @Override
+    public Product getProductById(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
     }
 
     @Override
@@ -93,5 +98,12 @@ public class ProductServiceImpl implements ProductService {
         savedProduct.setSpecialPrice(specialPrice);
 
         return modelMapper.map(productRepository.save(savedProduct), ProductDTO.class);
+    }
+
+    @Override
+    public ProductDTO deleteProduct(Long productId) {
+        Product product = getProductById(productId);
+        productRepository.delete(product);
+        return modelMapper.map(product, ProductDTO.class);
     }
 }
