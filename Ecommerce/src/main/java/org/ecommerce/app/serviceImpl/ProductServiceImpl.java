@@ -7,9 +7,11 @@ import org.ecommerce.app.payload.product.ProductDTO;
 import org.ecommerce.app.payload.product.ProductResponse;
 import org.ecommerce.app.repository.CategoryRepository;
 import org.ecommerce.app.repository.ProductRepository;
+import org.ecommerce.app.service.FileService;
 import org.ecommerce.app.service.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +31,10 @@ public class ProductServiceImpl implements ProductService {
     private CategoryRepository categoryRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private FileService fileService;
+    @Value("${project.images}")
+    private String path;
 
     @Override
     public ProductDTO addProduct(Long categoryId, ProductDTO productDto) {
@@ -110,44 +116,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException {
-        // 1. get the product from db
         Product product = getProductById(productId);
-
-        // 2. upload image to server
-        // 3. get the file name of uploaded image
-        String path = "images/";
-        String fileName = uploadImage(path, image);
-
-        // 4. updating the new file name to the product
+        String fileName = fileService.uploadImage(path, image);
         product.setImage(fileName);
-
-        // 5. save and return dto after mapping product to dto
         return modelMapper.map(productRepository.save(product),
                 ProductDTO.class);
     }
-
-    private String uploadImage(String path, MultipartFile image) throws IOException {
-        // 1. file names of current / original file
-        String originalFilename = image.getOriginalFilename();
-
-        // 2. generate a unique file name
-        String randomId = UUID.randomUUID().toString();
-
-        // image.jpg --> 1234 --> 1234.jpg
-        assert originalFilename != null;
-        String fileName = randomId.concat(originalFilename.substring(originalFilename.lastIndexOf(".")));
-        String filePath = path + File.separator + fileName;
-
-        // 3. check if path is existed or create a path
-        File folder = new File(path);
-        if (!folder.exists()) folder.mkdir();
-
-        // 4. upload to server
-        Files.copy(image.getInputStream(), Paths.get(filePath));
-
-        return fileName;
-    }
-
     @Override
     public ProductDTO deleteProduct(Long productId) {
         Product product = getProductById(productId);
