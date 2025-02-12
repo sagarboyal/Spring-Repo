@@ -1,5 +1,6 @@
 package org.ecommerce.app.controller;
 
+import jakarta.validation.Valid;
 import org.ecommerce.app.payload.product.ProductDTO;
 import org.ecommerce.app.payload.product.ProductResponse;
 import org.ecommerce.app.service.ProductService;
@@ -33,7 +34,7 @@ public class ProductController {
     }
 
     @PostMapping("/admin/categories/{categoryId}/product")
-    public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDto,
+    public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDto,
                                                  @PathVariable Long categoryId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.addProduct(categoryId, productDto));
     }
@@ -42,7 +43,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(productDto));
     }
     @PutMapping("/admin/products/{productId}/image")
-    public ResponseEntity<ProductDTO> updateProductImage(@PathVariable Long productId,
+    public ResponseEntity<ProductDTO> updateProductImage(@Valid @PathVariable Long productId,
                                                          @RequestParam("image") MultipartFile image) throws IOException {
         return ResponseEntity.status(HttpStatus.OK).body(productService.updateProductImage(productId, image));
     }
