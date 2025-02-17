@@ -3,6 +3,7 @@ package org.ecommerce.app.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @NoArgsConstructor
@@ -13,6 +14,7 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int roleId;
 
+    @ToString.Exclude
     @Enumerated(EnumType.STRING)
     private Roles roleName;
 
