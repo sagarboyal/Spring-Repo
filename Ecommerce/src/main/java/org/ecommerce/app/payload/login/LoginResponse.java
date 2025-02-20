@@ -12,8 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class LoginResponse {
+    private Long userId;
     private String jwtToken;
-
     private String username;
     private List<String> roles;
 }
