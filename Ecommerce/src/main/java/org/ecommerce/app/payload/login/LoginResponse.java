@@ -15,7 +15,7 @@ import java.util.List;
 public class LoginResponse {
     private Long userId;
     @JsonIgnore
-    private String jwtToken;
+    private String jwtCookie;
     private String username;
     private List<String> roles;
 }

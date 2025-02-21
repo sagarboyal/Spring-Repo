@@ -21,12 +21,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -77,6 +75,7 @@ public class AuthController {
                         .userId(userDetails.getId())
                         .username(userDetails.getUsername())
                         .roles(roles)
+                        .jwtCookie(jwtCookie.toString())
                         .build()
                 );
     }
@@ -130,5 +129,27 @@ public class AuthController {
         userRepository.save(user);
 
         return ResponseEntity.ok(new APIResponse("User registered successfully!", true));
+    }
+
+
+    @GetMapping("/username")
+    public String currentUserName(Authentication authentication) {
+        return (authentication != null) ? authentication.getName() : "";
+    }
+    @GetMapping("/user")
+    public ResponseEntity<?> currentUser(Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
+        return ResponseEntity.ok(
+                LoginResponse.builder()
+                        .userId(userDetails.getId())
+                        .username(userDetails.getUsername())
+                        .roles(roles)
+                        .build()
+                );
     }
 }
