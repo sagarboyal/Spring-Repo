@@ -5,17 +5,22 @@ import org.ecommerce.app.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/cart")
+@RequestMapping("/api/carts")
 public class CartController {
 
     @Autowired
     private CartService cartService;
+
+    @GetMapping()
+    public ResponseEntity<List<CartDTO>> getCarts() {
+        List<CartDTO> cartDTOS = cartService.getAllCarts();
+        return new ResponseEntity<>(cartDTOS, HttpStatus.FOUND);
+    }
 
     @PostMapping("/products/{productId}/quantity/{quantity}")
     public ResponseEntity<CartDTO> saveProductHandler(@PathVariable Long productId,
