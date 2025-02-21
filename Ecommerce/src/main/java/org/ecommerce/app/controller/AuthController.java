@@ -13,7 +13,9 @@ import org.ecommerce.app.repository.UserRepository;
 import org.ecommerce.app.security.jwt.JwtUtils;
 import org.ecommerce.app.security.services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -61,18 +63,20 @@ public class AuthController {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
+        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
 
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .body(
                 LoginResponse.builder()
                         .userId(userDetails.getId())
                         .username(userDetails.getUsername())
                         .roles(roles)
-                        .jwtToken(jwtToken)
                         .build()
                 );
     }
