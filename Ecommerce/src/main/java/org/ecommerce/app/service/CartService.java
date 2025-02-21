@@ -12,4 +12,6 @@ public interface CartService {
     Long findUserCartId(String email);
 
     CartDTO getUserCart(String email, Long cartId);
+
+    CartDTO updateProductQuantityInCart(Long productId, Integer quantity);
 }

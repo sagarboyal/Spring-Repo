@@ -44,4 +44,12 @@ public class CartController {
                 .status(HttpStatus.CREATED)
                 .body(data);
     }
+
+    @PutMapping("/products/{productId}/quantity/{operation}")
+    public ResponseEntity<CartDTO> updateProductHandler(@PathVariable Long productId,
+                                                        @PathVariable String operation) {
+        CartDTO cartDTO = cartService.updateProductQuantityInCart(productId,
+                operation.equalsIgnoreCase("delete") ? -1 : 1);
+        return ResponseEntity.status(HttpStatus.OK).body(cartDTO);
+    }
 }
