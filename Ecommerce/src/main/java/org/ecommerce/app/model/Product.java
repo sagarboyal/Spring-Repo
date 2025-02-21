@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -43,5 +44,5 @@ public class Product {
         cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             fetch = FetchType.EAGER
     )
-    private List<CartItem> carts;
+    private List<CartItem> carts = new ArrayList<>();
 }

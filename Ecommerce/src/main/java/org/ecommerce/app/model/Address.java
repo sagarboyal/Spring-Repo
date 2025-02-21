@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -58,5 +59,5 @@ public class Address {
     }
 
     @ManyToMany(mappedBy = "addresses")
-    private List<User> users;
+    private List<User> users = new ArrayList<>();
 }

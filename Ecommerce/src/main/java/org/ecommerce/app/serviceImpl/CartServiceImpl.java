@@ -11,11 +11,13 @@ import org.ecommerce.app.repository.CartItemRepository;
 import org.ecommerce.app.repository.CartRepository;
 import org.ecommerce.app.repository.ProductRepository;
 import org.ecommerce.app.service.CartService;
+import org.ecommerce.app.util.AuthUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -66,17 +68,17 @@ public class CartServiceImpl implements CartService {
         cartRepository.save(cart);
 
         List<CartItem> cartItems = cart.getCartItems();
-        List<ProductDTO> productDTOS = cartItems.stream()
-                .map(item -> {
-                    ProductDTO productDTO = modelMapper.map(item.getProduct(), ProductDTO.class);
-                    productDTO.setQuantity(item.getQuantity());
-                    return productDTO;
-                }).toList();
+
+        Stream<ProductDTO> productStream = cartItems.stream().map(item -> {
+            ProductDTO map = modelMapper.map(item.getProduct(), ProductDTO.class);
+            map.setQuantity(item.getQuantity());
+            return map;
+        });
 
         return CartDTO.builder()
                 .cartId(cart.getCartId())
-                .products(productDTOS)
                 .totalPrice(cart.getTotalPrice())
+                .products(productStream.toList())
                 .build();
     }
 
