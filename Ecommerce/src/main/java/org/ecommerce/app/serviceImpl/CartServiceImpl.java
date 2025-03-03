@@ -41,7 +41,7 @@ public class CartServiceImpl implements CartService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("product", "id", productId));
 
-        CartItem cartItem = cartItemRepository.findCartItemByProductIdAndCartId(productId, cart.getCartId());
+        CartItem cartItem = cartItemRepository.findCartItemByProductIdAndCartId(cart.getCartId(), productId);
 
         if (cartItem != null)
             throw new APIException("Product "+product.getProductName()+" has already been added to the cart");
@@ -197,7 +197,7 @@ public class CartServiceImpl implements CartService {
 
         cart.setTotalPrice(cart.getTotalPrice() - (cartItem.getProduct().getSpecialPrice() * cartItem.getQuantity()));
 
-        cartItemRepository.deleteCartItemByProductIdAndCartId(productId, cartId);
+        cartItemRepository.deleteCartItemByProductIdAndCartId(cartId, productId);
         return "Product " + cartItem.getProduct().getProductName() + " successfully deleted";
     }
 

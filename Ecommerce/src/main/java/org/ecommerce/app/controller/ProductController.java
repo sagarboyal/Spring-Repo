@@ -55,9 +55,10 @@ public class ProductController {
                                                  @PathVariable Long categoryId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.addProduct(categoryId, productDto));
     }
-    @PutMapping("/admin/products")
-    public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO productDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(productDto));
+    @PutMapping("/admin/products/{productId}")
+    public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO productDto,
+                                                    @PathVariable Long productId) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(productId, productDto));
     }
     @PutMapping("/admin/products/{productId}/image")
     public ResponseEntity<ProductDTO> updateProductImage(@Valid @PathVariable Long productId,

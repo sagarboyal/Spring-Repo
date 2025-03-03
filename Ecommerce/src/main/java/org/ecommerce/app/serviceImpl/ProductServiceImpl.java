@@ -136,12 +136,12 @@ public class ProductServiceImpl implements ProductService {
                 .build();
     }
 
-    @Transactional
     @Override
-    public ProductDTO updateProduct(ProductDTO productDto) {
-        Product product = modelMapper.map(productDto, Product.class);
-        Product savedProduct = productRepository.findById(product.getProductId()).
-                orElseThrow(() -> new ResourceNotFoundException("Product", "productId", product.getProductId()));
+    public ProductDTO updateProduct(Long productId, ProductDTO productDTO) {
+        Product savedProduct = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+
+        Product product = modelMapper.map(productDTO, Product.class);
 
         savedProduct.setProductName(product.getProductName() == null  ? savedProduct.getProductName() : product.getProductName());
         savedProduct.setImage(product.getImage( )== null? savedProduct.getImage() : product.getImage());
@@ -153,24 +153,22 @@ public class ProductServiceImpl implements ProductService {
         savedProduct.setSpecialPrice(specialPrice);
 
         Product finalSavedProduct = productRepository.save(savedProduct);
-        List<Cart> carts = cartRepository.findCartsByProductId(savedProduct.getProductId());
 
-        if(carts.isEmpty()) return modelMapper.map(finalSavedProduct, ProductDTO.class);
+        List<Cart> carts = cartRepository.findCartsByProductId(productId);
 
-        List<CartDTO> cartDTOS = carts.stream()
-                .map(cart -> {
-                    CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
-                    List<ProductDTO> productDTOList = cart.getCartItems().stream()
-                            .map(items -> modelMapper.map(items.getProduct(), ProductDTO.class))
-                            .toList();
-                    cartDTO.setProducts(productDTOList);
-                    return cartDTO;
-                })
-                .toList();
+        List<CartDTO> cartDTOs = carts.stream().map(cart -> {
+            CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
 
-        cartDTOS.forEach(cartDTO ->
-                cartService.updateProductInCarts(cartDTO.getCartId(), savedProduct.getProductId()));
+            List<ProductDTO> products = cart.getCartItems().stream()
+                    .map(p -> modelMapper.map(p.getProduct(), ProductDTO.class)).collect(Collectors.toList());
 
+            cartDTO.setProducts(products);
+
+            return cartDTO;
+
+        }).toList();
+
+        cartDTOs.forEach(cart -> cartService.updateProductInCarts(cart.getCartId(), productId));
 
         return modelMapper.map(finalSavedProduct, ProductDTO.class);
     }

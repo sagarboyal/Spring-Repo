@@ -11,7 +11,7 @@ public interface ProductService {
     ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
     ProductResponse getAllProductsByCategoryId(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
     ProductResponse getAllProductsByCategoryKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
-    ProductDTO updateProduct(ProductDTO productDto);
+    ProductDTO updateProduct(Long productId, ProductDTO productDTO);
     ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException;
     ProductDTO deleteProduct(Long productId);
 }
