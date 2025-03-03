@@ -1,13 +1,19 @@
 package org.ecommerce.app.serviceImpl;
 
+import jakarta.transaction.Transactional;
 import org.ecommerce.app.exceptions.APIException;
 import org.ecommerce.app.exceptions.ResourceNotFoundException;
+import org.ecommerce.app.model.Cart;
 import org.ecommerce.app.model.Category;
 import org.ecommerce.app.model.Product;
+import org.ecommerce.app.payload.cart.CartDTO;
 import org.ecommerce.app.payload.product.ProductDTO;
 import org.ecommerce.app.payload.product.ProductResponse;
+import org.ecommerce.app.repository.CartItemRepository;
+import org.ecommerce.app.repository.CartRepository;
 import org.ecommerce.app.repository.CategoryRepository;
 import org.ecommerce.app.repository.ProductRepository;
+import org.ecommerce.app.service.CartService;
 import org.ecommerce.app.service.FileService;
 import org.ecommerce.app.service.ProductService;
 import org.modelmapper.ModelMapper;
@@ -22,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -36,6 +43,12 @@ public class ProductServiceImpl implements ProductService {
     private FileService fileService;
     @Value("${project.images}")
     private String path;
+    @Autowired
+    private CartRepository cartRepository;
+    @Autowired
+    private CartService cartService;
+    @Autowired
+    private CartItemRepository cartItemRepository;
 
     @Override
     public ProductDTO addProduct(Long categoryId, ProductDTO productDto) {
@@ -61,7 +74,6 @@ public class ProductServiceImpl implements ProductService {
         Product savedProduct = productRepository.save(product);
         return modelMapper.map(savedProduct, ProductDTO.class);
     }
-
     @Override
     public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         Sort sort = sortOrder.equalsIgnoreCase("asc")
@@ -124,6 +136,7 @@ public class ProductServiceImpl implements ProductService {
                 .build();
     }
 
+    @Transactional
     @Override
     public ProductDTO updateProduct(ProductDTO productDto) {
         Product product = modelMapper.map(productDto, Product.class);
@@ -139,7 +152,27 @@ public class ProductServiceImpl implements ProductService {
         double specialPrice = (savedProduct.getPrice() - ((savedProduct.getDiscount() * 0.01) * savedProduct.getPrice()));
         savedProduct.setSpecialPrice(specialPrice);
 
-        return modelMapper.map(productRepository.save(savedProduct), ProductDTO.class);
+        Product finalSavedProduct = productRepository.save(savedProduct);
+        List<Cart> carts = cartRepository.findCartsByProductId(savedProduct.getProductId());
+
+        if(carts.isEmpty()) return modelMapper.map(finalSavedProduct, ProductDTO.class);
+
+        List<CartDTO> cartDTOS = carts.stream()
+                .map(cart -> {
+                    CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+                    List<ProductDTO> productDTOList = cart.getCartItems().stream()
+                            .map(items -> modelMapper.map(items.getProduct(), ProductDTO.class))
+                            .toList();
+                    cartDTO.setProducts(productDTOList);
+                    return cartDTO;
+                })
+                .toList();
+
+        cartDTOS.forEach(cartDTO ->
+                cartService.updateProductInCarts(cartDTO.getCartId(), savedProduct.getProductId()));
+
+
+        return modelMapper.map(finalSavedProduct, ProductDTO.class);
     }
 
     @Override
@@ -150,9 +183,15 @@ public class ProductServiceImpl implements ProductService {
         return modelMapper.map(productRepository.save(product),
                 ProductDTO.class);
     }
+
     @Override
+    @Transactional
     public ProductDTO deleteProduct(Long productId) {
         Product product = getProductById(productId);
+
+        List<Cart> carts = cartRepository.findCartsByProductId(productId);
+        carts.forEach(cart -> cartService.deleteProductFromCart(cart.getCartId(), productId));
+        
         productRepository.delete(product);
         return modelMapper.map(product, ProductDTO.class);
     }
