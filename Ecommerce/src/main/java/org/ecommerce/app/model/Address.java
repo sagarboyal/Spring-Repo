@@ -45,8 +45,8 @@ public class Address {
     private String country;
 
     @NotBlank
-    @Size(min = 6,
-            message = "Zip code Must be At least 5 Characters!")
+    @Size(min = 4,
+            message = "Zip code Must be At least 4 Characters!")
     private String zipcode;
 
     public Address(String street, String building, String city, String state, String country, String zipcode) {
@@ -58,6 +58,7 @@ public class Address {
         this.zipcode = zipcode;
     }
 
-    @ManyToMany(mappedBy = "addresses")
-    private List<User> users = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
