@@ -1,6 +1,5 @@
 package org.ecommerce.app.serviceImpl;
 
-import jakarta.transaction.Transactional;
 import org.ecommerce.app.exceptions.APIException;
 import org.ecommerce.app.exceptions.ResourceNotFoundException;
 import org.ecommerce.app.model.Cart;
@@ -47,8 +46,6 @@ public class ProductServiceImpl implements ProductService {
     private CartRepository cartRepository;
     @Autowired
     private CartService cartService;
-    @Autowired
-    private CartItemRepository cartItemRepository;
 
     @Override
     public ProductDTO addProduct(Long categoryId, ProductDTO productDto) {
