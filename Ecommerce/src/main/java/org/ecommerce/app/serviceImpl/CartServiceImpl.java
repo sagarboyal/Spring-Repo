@@ -197,14 +197,20 @@ public class CartServiceImpl implements CartService {
             throw new ResourceNotFoundException("Product", "productId", productId);
         }
 
-        cart.setTotalPrice(cart.getTotalPrice() -
-                (cartItem.getPrice() * cartItem.getQuantity()));
+        cart.setTotalPrice(cart.getTotalPrice() - (cartItem.getPrice() * cartItem.getQuantity()));
 
+        //cartItemRepository.deleteCartItemByProductIdAndCartId(cartId, productId);
+
+        // Delete cart item first to ensure Hibernate does not complain about transient issues
+        cartItemRepository.delete(cartItem);
+
+        // Remove reference in Cart after deletion
         cart.getCartItems().remove(cartItem);
-        cartItemRepository.deleteCartItemByProductIdAndCartId(cartId, productId);
+        cartRepository.save(cart); // Explicitly save to update the cart entity
 
-        return "Product " + cartItem.getProduct().getProductName() + " removed from the cart !!!";
+        return "Product " + cartItem.getProduct().getProductName() + " removed from the cart!";
     }
+
 
     @Override
     public void updateProductInCarts(Long cartId, Long productId) {
