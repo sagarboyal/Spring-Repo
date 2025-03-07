@@ -106,6 +106,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public Long findUserCartId(String email) {
         Cart cart = cartRepository.findCartByEmail(email);
+        if(cart == null) cart = createCart();
         return cart.getCartId();
     }
 
@@ -203,13 +204,6 @@ public class CartServiceImpl implements CartService {
         cart.setTotalPrice(price < 0 ? 0 : price);
 
         cartItemRepository.deleteCartItemByProductIdAndCartId(cartId, productId);
-
-        // Delete cart item first to ensure Hibernate does not complain about transient issues
-        //cartItemRepository.delete(cartItem);
-
-        // Remove reference in Cart after deletion
-        cart.getCartItems().remove(cartItem);
-        cartRepository.save(cart); // Explicitly save to update the cart entity
 
         return "Product " + cartItem.getProduct().getProductName() + " removed from the cart!";
     }

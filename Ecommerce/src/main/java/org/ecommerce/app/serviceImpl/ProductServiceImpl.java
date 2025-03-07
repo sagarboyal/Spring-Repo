@@ -187,15 +187,23 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO deleteProduct(Long productId) {
-        List<Cart> carts = cartRepository.findCartsByProductId(productId);
-
-        carts.forEach(cart -> cartService.deleteProductFromCart(cart.getCartId(), productId));
-
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 
-        //product.setCarts(null);
-        //product = productRepository.save(product);
+        List<Cart> carts = cartRepository.findCartsByProductId(productId);
+
+        carts.forEach(cart ->{
+            CartItem cartItem = cartItemRepository.findCartItemByProductIdAndCartId(cart.getCartId(), productId);
+            double price = cart.getTotalPrice() - (cartItem.getPrice() * cartItem.getQuantity());
+            cart.setTotalPrice(price < 0 ? 0 : price);
+            // Delete cart item first to ensure Hibernate does not complain about transient issues
+            cartItemRepository.delete(cartItem);
+
+            // Remove reference in Cart after deletion
+            cart.getCartItems().remove(cartItem);
+            cartRepository.save(cart); // Explicitly save to update the cart entity
+        });
+
         productRepository.delete(product);
 
         return modelMapper.map(product, ProductDTO.class);
