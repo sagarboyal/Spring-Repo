@@ -196,13 +196,13 @@ public class CartServiceImpl implements CartService {
         if (cartItem == null) {
             throw new ResourceNotFoundException("Product", "productId", productId);
         }
+        double price = cart.getTotalPrice() - (cartItem.getPrice() * cartItem.getQuantity());
+        cart.setTotalPrice(price < 0 ? 0 : price);
 
-        cart.setTotalPrice(cart.getTotalPrice() - (cartItem.getPrice() * cartItem.getQuantity()));
-
-        //cartItemRepository.deleteCartItemByProductIdAndCartId(cartId, productId);
+        cartItemRepository.deleteCartItemByProductIdAndCartId(cartId, productId);
 
         // Delete cart item first to ensure Hibernate does not complain about transient issues
-        cartItemRepository.delete(cartItem);
+        //cartItemRepository.delete(cartItem);
 
         // Remove reference in Cart after deletion
         cart.getCartItems().remove(cartItem);

@@ -30,8 +30,8 @@ public class Payment {
     private String paymentGatewayStatus;
     private String paymentGatewayResponseMessage;
 
-    public Payment(Long paymentId, String paymentGatewayId, String paymentGatewayName, String paymentGatewayStatus, String paymentGatewayResponseMessage) {
-        this.paymentId = paymentId;
+    public Payment(String paymentMethod, String paymentGatewayId, String paymentGatewayName, String paymentGatewayStatus, String paymentGatewayResponseMessage) {
+        this.paymentMethod = paymentMethod;
         this.paymentGatewayId = paymentGatewayId;
         this.paymentGatewayName = paymentGatewayName;
         this.paymentGatewayStatus = paymentGatewayStatus;

@@ -26,10 +26,6 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public AddressDTO saveAddress(AddressDTO addressDTO, User user) {
         Address address = modelMapper.map(addressDTO, Address.class);
-
-        user.getAddresses().add(address);
-        userRepository.save(user);
-
         address.setUser(user);
         address = addressRepository.save(address);
         return modelMapper.map(address, AddressDTO.class);

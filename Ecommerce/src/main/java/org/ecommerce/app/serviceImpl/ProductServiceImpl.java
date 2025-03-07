@@ -1,8 +1,10 @@
 package org.ecommerce.app.serviceImpl;
 
+import jakarta.transaction.Transactional;
 import org.ecommerce.app.exceptions.APIException;
 import org.ecommerce.app.exceptions.ResourceNotFoundException;
 import org.ecommerce.app.model.Cart;
+import org.ecommerce.app.model.CartItem;
 import org.ecommerce.app.model.Category;
 import org.ecommerce.app.model.Product;
 import org.ecommerce.app.payload.cart.CartDTO;
@@ -26,6 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,6 +50,8 @@ public class ProductServiceImpl implements ProductService {
     private CartRepository cartRepository;
     @Autowired
     private CartService cartService;
+    @Autowired
+    private CartItemRepository cartItemRepository;
 
     @Override
     public ProductDTO addProduct(Long categoryId, ProductDTO productDto) {
@@ -181,14 +187,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO deleteProduct(Long productId) {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
-
         List<Cart> carts = cartRepository.findCartsByProductId(productId);
 
         carts.forEach(cart -> cartService.deleteProductFromCart(cart.getCartId(), productId));
 
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+
+        //product.setCarts(null);
+        //product = productRepository.save(product);
         productRepository.delete(product);
+
         return modelMapper.map(product, ProductDTO.class);
     }
 }
