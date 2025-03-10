@@ -3,10 +3,13 @@ package org.ecommerce.app.serviceImpl;
 import org.ecommerce.app.exceptions.APIException;
 import org.ecommerce.app.exceptions.ResourceNotFoundException;
 import org.ecommerce.app.model.Category;
+import org.ecommerce.app.model.Product;
 import org.ecommerce.app.payload.category.CategoryDTO;
 import org.ecommerce.app.payload.category.CategoryResponse;
 import org.ecommerce.app.repository.CategoryRepository;
+import org.ecommerce.app.repository.ProductRepository;
 import org.ecommerce.app.service.CategoryService;
+import org.ecommerce.app.service.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -26,6 +30,10 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Override
     public CategoryResponse getCategoryList(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder){
@@ -57,8 +65,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDto) {
         Category data = categoryRepository.findByCategoryName(categoryDto.getCategoryName());
+
         if (data != null) throw new APIException("Category already exists");
-        // covert dto class to entity
+
         Category category = modelMapper.map(categoryDto, Category.class);
         return modelMapper.map(categoryRepository.save(category), CategoryDTO.class);
     }
@@ -75,16 +84,23 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDTO deleteCategoryById(long id) {
-        Category category = modelMapper.map(getCategoryById(id), Category.class);
-        if (category != null) categoryRepository.delete(category);
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", id));
+
+        for (Product product : new ArrayList<>(category.getProducts())) {
+            productService.deleteProduct(product.getProductId());
+        }
+        category.getProducts().clear();
+        categoryRepository.save(category);
+        categoryRepository.delete(category);
+
+
         return modelMapper.map(category, CategoryDTO.class);
     }
 
     @Override
     public CategoryDTO updateCategory(CategoryDTO categoryDto) {
-        // if id not available it will throw exception
         getCategoryById(categoryDto.getCategoryId());
-        // if found just covert it into entity class and update it save it
         categoryRepository.save(modelMapper.map(categoryDto, Category.class));
         return categoryDto;
     }

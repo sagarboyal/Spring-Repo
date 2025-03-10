@@ -107,16 +107,12 @@ public class OrderServiceImpl implements OrderService {
             int quantity = item.getQuantity();
             Product product = item.getProduct();
 
-            // Reduce stock quantity
             product.setQuantity(product.getQuantity() - quantity);
 
-            // Save product back to the database
             productRepository.save(product);
 
-            // Remove items from cart safely using iterator
-            iterator.remove(); // Safe way to remove during iteration
+            iterator.remove();
 
-            // Also remove from the database if necessary
             cartService.deleteProductFromCart(cart.getCartId(), item.getProduct().getProductId());
         }
 

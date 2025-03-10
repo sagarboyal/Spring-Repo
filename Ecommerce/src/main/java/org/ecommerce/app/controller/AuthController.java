@@ -134,7 +134,7 @@ public class AuthController {
 
     @GetMapping("/username")
     public String currentUserName(Authentication authentication) {
-        return (authentication != null) ? authentication.getName() : "";
+        return (authentication != null) ? authentication.getName() : "No User Logged In!";
     }
     @GetMapping("/user")
     public ResponseEntity<?> currentUser(Authentication authentication) {

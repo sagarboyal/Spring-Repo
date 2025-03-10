@@ -195,13 +195,11 @@ public class ProductServiceImpl implements ProductService {
         carts.forEach(cart ->{
             CartItem cartItem = cartItemRepository.findCartItemByProductIdAndCartId(cart.getCartId(), productId);
             double price = cart.getTotalPrice() - (cartItem.getPrice() * cartItem.getQuantity());
-            cart.setTotalPrice(price < 0 ? 0 : price);
-            // Delete cart item first to ensure Hibernate does not complain about transient issues
-            cartItemRepository.delete(cartItem);
+            cart.setTotalPrice(Math.max(price, 0));
 
-            // Remove reference in Cart after deletion
+            cartItemRepository.delete(cartItem);
             cart.getCartItems().remove(cartItem);
-            cartRepository.save(cart); // Explicitly save to update the cart entity
+            cartRepository.save(cart);
         });
 
         productRepository.delete(product);

@@ -41,8 +41,8 @@ public class Product {
     private User seller;
 
     @OneToMany(mappedBy = "product",
-        cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            fetch = FetchType.EAGER
+        cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, orphanRemoval = true
     )
     private List<CartItem> carts = new ArrayList<>();
 }

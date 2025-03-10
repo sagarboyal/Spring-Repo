@@ -56,7 +56,6 @@ public class AddressServiceImpl implements AddressService {
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "id", addressId));
 
-        // Update only non-null fields
         Optional.ofNullable(addressDTO.getStreet()).ifPresent(address::setStreet);
         Optional.ofNullable(addressDTO.getBuilding()).ifPresent(address::setBuilding);
         Optional.ofNullable(addressDTO.getCity()).ifPresent(address::setCity);
@@ -72,7 +71,7 @@ public class AddressServiceImpl implements AddressService {
     public AddressDTO deleteAddress(Long addressId) {
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "id", addressId));
-        //address.getUser().getAddresses().remove(address);
+
         addressRepository.delete(address);
         return modelMapper.map(address, AddressDTO.class);
     }

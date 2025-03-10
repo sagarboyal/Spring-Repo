@@ -20,6 +20,6 @@ public class Category {
     @Size(min = 4, message = "category name must contain at least 4 characters")
     private String categoryName;
 
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
 }
