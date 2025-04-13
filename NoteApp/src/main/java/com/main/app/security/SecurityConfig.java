@@ -14,11 +14,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(
-        prePostEnabled = true,
-        securedEnabled = true,
-        jsr250Enabled = true
-)
 public class SecurityConfig {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -26,6 +21,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((requests) ->
                 requests
+                        .requestMatchers("api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/notes/**", "/api/notes").permitAll()
                         .anyRequest().authenticated());
         http.sessionManagement(session ->
