@@ -1,6 +1,7 @@
 package com.main.app.security;
 
 import com.main.app.security.filters.CustomLoggingFilter;
+import com.main.app.security.filters.RequestValidationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,8 +29,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/notes/**", "/api/notes").permitAll()
                         .anyRequest().authenticated());
 
-        http.addFilterBefore(new CustomLoggingFilter(),
-                UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterBefore(new CustomLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new RequestValidationFilter(), CustomLoggingFilter.class);
 
         http.sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
