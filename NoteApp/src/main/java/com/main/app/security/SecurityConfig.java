@@ -1,7 +1,5 @@
 package com.main.app.security;
 
-import com.main.app.security.filters.CustomLoggingFilter;
-import com.main.app.security.filters.RequestValidationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,7 +9,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -28,10 +25,6 @@ public class SecurityConfig {
                         .requestMatchers("api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/notes/**", "/api/notes").permitAll()
                         .anyRequest().authenticated());
-
-        http
-                .addFilterBefore(new CustomLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(new RequestValidationFilter(), CustomLoggingFilter.class);
 
         http.sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
