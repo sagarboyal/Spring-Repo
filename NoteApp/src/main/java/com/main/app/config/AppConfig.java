@@ -1,13 +1,11 @@
 package com.main.app.config;
 
-import com.main.app.jwt.AuthTokenFilter;
 import com.main.app.model.Role;
 import com.main.app.model.Roles;
 import com.main.app.model.User;
 import com.main.app.repository.RoleRepository;
 import com.main.app.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.WebApplicationType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
