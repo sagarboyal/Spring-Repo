@@ -1,4 +1,4 @@
-package com.main.app.dto.login;
+package com.main.app.payload.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
