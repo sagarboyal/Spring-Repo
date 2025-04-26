@@ -148,5 +148,10 @@ public class AuthController {
         return ResponseEntity.ok().body(response);
     }
 
+    @GetMapping("/username")
+    public ResponseEntity<?> getUsername(@AuthenticationPrincipal UserDetails user) {
+        return ResponseEntity.ok(user.getUsername() != null ? user.getUsername() : "");
+    }
+
 
 }
