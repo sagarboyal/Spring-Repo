@@ -7,9 +7,7 @@ import java.util.List;
 
 @Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class UserInfoResponse {
     private Long id;
     private String username;
