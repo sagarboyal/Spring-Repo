@@ -163,5 +163,16 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("Password reset token generated successfully!"));
     }
 
+    @PostMapping("/public/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestParam String token,
+                                           @RequestParam String newPassword) {
+        try {
+            userService.resetPassword(token, newPassword);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Invalid token!"));
+        }
+        return ResponseEntity.ok(new MessageResponse("Password reset successfully!"));
+    }
+
 
 }
