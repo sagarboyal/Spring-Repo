@@ -153,5 +153,15 @@ public class AuthController {
         return ResponseEntity.ok(user.getUsername() != null ? user.getUsername() : "");
     }
 
+    @PostMapping("/public/forget-password")
+    public ResponseEntity<?> forgetPassword(@RequestParam String email) {
+        try {
+            userService.generatePasswordResetToken(email);
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Invalid email!"));
+        }
+        return ResponseEntity.ok(new MessageResponse("Password reset token generated successfully!"));
+    }
+
 
 }

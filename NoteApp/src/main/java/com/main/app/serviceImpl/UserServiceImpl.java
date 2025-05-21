@@ -1,21 +1,28 @@
 package com.main.app.serviceImpl;
 
 import com.main.app.dto.UserDTO;
+import com.main.app.model.PasswordResetToken;
 import com.main.app.model.Role;
 import com.main.app.model.Roles;
 import com.main.app.model.User;
+import com.main.app.repository.PasswordResetTokenRepository;
 import com.main.app.repository.RoleRepository;
 import com.main.app.repository.UserRepository;
 import com.main.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
-
+    @Value("${frontend.url}")
+    private String frontEndUrl;
     @Autowired
     UserRepository userRepository;
 
@@ -23,6 +30,8 @@ public class UserServiceImpl implements UserService {
     RoleRepository roleRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Override
     public void updateUserRole(Long userId, String roleName) {
@@ -65,6 +74,22 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to update password");
         }
+    }
+
+    @Override
+    public void generatePasswordResetToken(String email) {
+      User user = userRepository.findByEmail(email)
+              .orElseThrow(() -> new RuntimeException("User Email not found"));
+
+      String token = UUID.randomUUID().toString();
+      Instant expiry = Instant.now().plus(24, ChronoUnit.HOURS);
+      PasswordResetToken passwordResetToken =
+              new PasswordResetToken(token, expiry, user);
+
+      passwordResetTokenRepository.save(passwordResetToken);
+
+      String resetUrl = frontEndUrl + "/reset-password?token=" + token;
+      //sendEmail to user
     }
 
 
