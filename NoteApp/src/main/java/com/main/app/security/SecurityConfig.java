@@ -36,8 +36,11 @@ public class SecurityConfig {
                                         "/api/notes/**",
                                         "/api/notes",
                                         "api/csrf-token",
-                                        "api/auth/public/**") .permitAll()
+                                        "api/auth/public/**",
+                                        "/oauth2/**") .permitAll()
                             .anyRequest().authenticated())
+                    .oauth2Login(oauth -> {
+                    })
                     .exceptionHandling(exception ->
                                     exception.authenticationEntryPoint(unauthorizedHandler))
                     .addFilterBefore(authTokenFilter(),
