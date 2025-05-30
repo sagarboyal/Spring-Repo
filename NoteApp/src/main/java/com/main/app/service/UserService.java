@@ -3,6 +3,7 @@ package com.main.app.service;
 import com.main.app.dto.UserDTO;
 import com.main.app.model.User;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
     void updateUserRole(Long userId, String roleName);
@@ -26,4 +27,8 @@ public interface UserService {
     void generatePasswordResetToken(String email);
 
     void resetPassword(String token, String newPassword);
+
+    Optional<User> findByEmail(String email);
+
+    User registerUser(User newUser);
 }

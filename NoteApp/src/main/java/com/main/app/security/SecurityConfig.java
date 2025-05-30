@@ -1,10 +1,12 @@
 package com.main.app.security;
 
+import com.main.app.config.OAuth2LoginSuccessHandler;
 import com.main.app.jwt.AuthEntryPoint;
 import com.main.app.jwt.AuthTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,6 +23,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     private final AuthEntryPoint unauthorizedHandler;
+    @Lazy
+    private final OAuth2LoginSuccessHandler loginSuccessHandler;
 
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -39,7 +43,8 @@ public class SecurityConfig {
                                         "api/auth/public/**",
                                         "/oauth2/**") .permitAll()
                             .anyRequest().authenticated())
-                    .oauth2Login(oauth -> {
+                    .oauth2Login(oauth2 -> {
+                        oauth2.successHandler(loginSuccessHandler);
                     })
                     .exceptionHandling(exception ->
                                     exception.authenticationEntryPoint(unauthorizedHandler))
