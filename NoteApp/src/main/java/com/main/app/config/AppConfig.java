@@ -5,6 +5,7 @@ import com.main.app.model.Roles;
 import com.main.app.model.User;
 import com.main.app.repository.RoleRepository;
 import com.main.app.repository.UserRepository;
+import com.warrenstrange.googleauth.GoogleAuthenticator;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -65,8 +66,14 @@ public class AppConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public GoogleAuthenticator googleAuthenticator() {
+        return new GoogleAuthenticator();
     }
 }
