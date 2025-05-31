@@ -2,6 +2,8 @@ package com.main.app.service;
 
 import com.main.app.dto.UserDTO;
 import com.main.app.model.User;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -31,4 +33,12 @@ public interface UserService {
     Optional<User> findByEmail(String email);
 
     User registerUser(User newUser);
+
+    GoogleAuthenticatorKey generateAuthenticatorKey(Long userId);
+
+    boolean validate2FACode(Long userId, int code);
+
+    void  enable2FA(Long userId);
+
+    void  disable2FA(Long userId);
 }

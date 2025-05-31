@@ -9,8 +9,10 @@ import com.main.app.repository.PasswordResetTokenRepository;
 import com.main.app.repository.RoleRepository;
 import com.main.app.repository.UserRepository;
 import com.main.app.service.EmailService;
+import com.main.app.service.TotpService;
 import com.main.app.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,20 +24,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     @Value("${frontend.url}")
     private String frontEndUrl;
-    @Autowired
-    UserRepository userRepository;
 
-    @Autowired
-    RoleRepository roleRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private PasswordResetTokenRepository passwordResetTokenRepository;
-    @Autowired
-    private EmailService emailService;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final EmailService emailService;
+    private final TotpService totpService;
 
     @Override
     public void updateUserRole(Long userId, String roleName) {
@@ -159,6 +158,40 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId).orElseThrow(()
                 -> new RuntimeException("User not found"));
         user.setCredentialsNonExpired(!expire);
+        userRepository.save(user);
+    }
+
+    @Override
+    public GoogleAuthenticatorKey generateAuthenticatorKey(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        GoogleAuthenticatorKey key = totpService.generateSecret();
+        user.setTwoFactorSecret(key.getKey());
+        userRepository.save(user);
+        return key;
+    }
+
+    @Override
+    public boolean validate2FACode(Long userId, int code) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return totpService.verifyKey(user.getTwoFactorSecret(), code);
+    }
+
+    @Override
+    public void  enable2FA(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setTwoFactorEnabled(true);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void  disable2FA(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setTwoFactorEnabled(false);
         userRepository.save(user);
     }
 
