@@ -11,7 +11,10 @@ import com.main.app.payload.response.MessageResponse;
 import com.main.app.payload.response.UserInfoResponse;
 import com.main.app.repository.RoleRepository;
 import com.main.app.repository.UserRepository;
+import com.main.app.service.TotpService;
 import com.main.app.service.UserService;
+import com.main.app.utils.AuthUtils;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,10 +31,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -45,6 +45,8 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final UserService userService;
+    private final AuthUtils authUtils;
+    private final TotpService totpService;
 
     @PostMapping("/public/sign-in")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
@@ -174,5 +176,50 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("Password reset successfully!"));
     }
 
+    @PostMapping("/enable-2fa")
+    public ResponseEntity<?> enable2FA() {
+        Long userId = authUtils.loggedInUserId();
+        GoogleAuthenticatorKey key = userService.generateAuthenticatorKey(userId);
+        String qrCodeUrl = totpService.getQrCodeUrl(key, authUtils.loggedInUserName());
+        return ResponseEntity.ok(qrCodeUrl);
+    }
+
+    @PostMapping("/disable-2fa")
+    public ResponseEntity<?> disable2FA() {
+        Long userId = authUtils.loggedInUserId();
+        userService.disable2FA(userId);
+        return ResponseEntity.ok("Disabled 2FA");
+    }
+
+    @PostMapping("/verify-2fa")
+    public ResponseEntity<?> verify2FA(@RequestParam int code) {
+        Long userId = authUtils.loggedInUserId();
+        boolean isValid = userService.validate2FACode(userId, code);
+        if (isValid) userService.enable2FA(userId);
+        return isValid ? ResponseEntity.ok("Your 2FA code verified successfully!") :
+                ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new MessageResponse("Invalid 2FA code!"));
+    }
+
+    @GetMapping("/user/2fa-status")
+    public ResponseEntity<?> status() {
+        User user = authUtils.loggedInUser();
+        return ResponseEntity.ok(
+                Map.of("is2faEnabled", user.isTwoFactorEnabled())
+        );
+    }
+
+    @PostMapping("/public/verify-2fa-login")
+    public ResponseEntity<?> verify2FALogin(
+            @RequestParam int code,
+            @RequestParam String jwtToken) {
+        String username = jwtUtils.getUserNameFromJwtToken(jwtToken);
+        User user = userService.findByUsername(username);
+        boolean isValid = userService.validate2FACode(user.getUserId(), code);
+        return isValid ? ResponseEntity.ok("Your 2FA code verified successfully!") :
+                ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new MessageResponse("Invalid 2FA code!"));
+
+    }
 
 }
